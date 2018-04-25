@@ -36,6 +36,14 @@ public class SecureBankVerificationSimulator {
 
     private Bank bank;
 
+    /**
+     * Creates a SecureBankVerificationSimulator instance.
+     *
+     * @param numberOfClients        the number of clients
+     * @param numberOfVerifications  the number of verifications
+     * @param percentageOfInvalidMsg the percentage of messages being valid
+     * @param outputFileName         the output file name
+     */
     public SecureBankVerificationSimulator(Integer numberOfClients, Integer numberOfVerifications, Double percentageOfInvalidMsg, String outputFileName) {
         argumentIsBetween("numberOfClients", numberOfClients, NUMBER_OF_CLIENT_LOWER_LIMIT, NUMBER_OF_CLIENTS_UPPER_LIMIT);
         argumentIsBetween("numberOfVerifications", numberOfVerifications, NUMBER_OF_VERIFICATIONS_LOWER_LIMIT, NUMBER_OF_VERIFICATIONS_UPPER_LIMIT);
@@ -50,22 +58,46 @@ public class SecureBankVerificationSimulator {
         this.bank = new Bank("Secure Bank, N.A");
     }
 
+    /**
+     * Verify the number argument within a range.
+     *
+     * @param argumentName the argument name
+     * @param argument     the argument value
+     * @param lower        the lower limit
+     * @param upper        the upper limit
+     * @param <T>          the number type
+     */
     private static <T extends Number> void argumentIsBetween(String argumentName, T argument, T lower, T upper) {
         if (argument.doubleValue() < lower.doubleValue() || argument.doubleValue() > upper.doubleValue()) {
             throw new IllegalArgumentException("Argument " + argumentName + " " + argument + " is invalid. Lower limit: " + lower + ", Upper limit: " + upper);
         }
     }
 
+    /**
+     * Verify the output file is a csv file.
+     *
+     * @param outputFileName the output file name
+     */
     private static void checkFileName(String outputFileName) {
         if (!outputFileName.toLowerCase().endsWith(".csv")) {
             throw new IllegalArgumentException("Argument outputFileName is not ending with .csv.");
         }
     }
 
+    /**
+     * Creates a client with random unique client id and rsa key pair.
+     *
+     * @return A client instance.
+     */
     private static Client generateClient() {
         return new Client(Randomness.getUniqueRandomInteger(), RsaAlgorithm.generateRsaKeyPair());
     }
 
+    /**
+     * Creates a random date.
+     *
+     * @return A random date.
+     */
     private static LocalDate getRandomLocalDate() {
         LocalDate endDate = LocalDate.now(); //end date
         long end = endDate.toEpochDay();
@@ -141,11 +173,17 @@ public class SecureBankVerificationSimulator {
         }
     }
 
+    /**
+     * Set up simulator.
+     */
     private void setUp() {
         this.generateVerifications();
         this.generateBankClientPortfolio();
     }
 
+    /**
+     * Simulates bank processing transactions.
+     */
     private void simulateTransactionProcessing() {
         List<Transaction> transactions = new ArrayList<>();
 
@@ -157,11 +195,19 @@ public class SecureBankVerificationSimulator {
         this.writeToFile(transactions);
     }
 
+    /**
+     * Run the simulation.
+     */
     public void run() {
         this.setUp();
         this.simulateTransactionProcessing();
     }
 
+    /**
+     * Write transactions to csv file.
+     *
+     * @param transactions The transactions to write to file.
+     */
     private void writeToFile(List<Transaction> transactions) {
         try (BufferedWriter outPutFile = new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(this.outputFileName), UTF))) {
