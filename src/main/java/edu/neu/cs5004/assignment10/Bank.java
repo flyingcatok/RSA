@@ -20,7 +20,7 @@ public class Bank {
         return clientInfoMap;
     }
 
-    public boolean processSignedMessage(Integer clientId, SignedMessage signedMessage) {
+    public ProcessingResult processSignedMessage(Integer clientId, SignedMessage signedMessage) {
         if (!this.clientInfoMap.containsKey(clientId)) {
             throw new IllegalArgumentException("Invalid client id: " + clientId);
         }
@@ -33,19 +33,38 @@ public class Bank {
         boolean isSignatureValid = RsaAlgorithm.verifyDigitalSignature(signedMessage, clientInfo.getPublishKey());
 
         if (!isSignatureValid) {
-            return false;
+            return new ProcessingResult(isSignatureValid, false);
         }
 
         Message message = signedMessage.getMessage();
 
         if (message.getAction() == BankingAction.Deposit) {
-            return message.getAmount() <= clientInfo.getDepositLimit();
+            return new ProcessingResult(true, message.getAmount() <= clientInfo.getDepositLimit());
         }
 
         if (message.getAction() == BankingAction.Withdrawal) {
-            return message.getAmount() <= clientInfo.getWithdrawalLimit();
+            return new ProcessingResult(true,message.getAmount() <= clientInfo.getWithdrawalLimit());
         }
 
-        return false;
+        throw new IllegalStateException("Shouldn't reach to here. Please check if Banking action is supported.");
+    }
+
+    public class ProcessingResult {
+        private boolean isMessageVerified;
+        private boolean isBankingActionAccepted;
+
+        public ProcessingResult(boolean isMessageVerified, boolean isBankingActionAccepted) {
+
+            this.isMessageVerified = isMessageVerified;
+            this.isBankingActionAccepted = isBankingActionAccepted;
+        }
+
+        public boolean isMessageVerified() {
+            return isMessageVerified;
+        }
+
+        public boolean isBankingActionAccepted() {
+            return isBankingActionAccepted;
+        }
     }
 }
