@@ -127,8 +127,8 @@ public class SecureBankVerificationSimulator {
 
     private PublicClientInfo getPublicClientInfo(Client client) {
         PublicClientInfo clientInfo = new PublicClientInfo();
-        clientInfo.setId(client.getId());
-        clientInfo.setPublishKey(client.getRsaKeyPair().getPublicKey());
+        clientInfo.setClientId(client.getClientId());
+        clientInfo.setPublicKey(client.getRsaKeyPair().getPublicKey());
         clientInfo.setDepositLimit(generateRandomDepositLimit());
         clientInfo.setWithdrawalLimit(generateRandomWithdrawalLimit());
 
@@ -137,7 +137,7 @@ public class SecureBankVerificationSimulator {
 
     private void generateBankClientPortfolio() {
         for (Client client : this.clientsWithSignedMessages.keySet()) {
-            this.bank.getClientInfoMap().put(client.getId(), getPublicClientInfo(client));
+            this.bank.getClientInfoMap().put(client.getClientId(), getPublicClientInfo(client));
         }
     }
 
@@ -151,8 +151,8 @@ public class SecureBankVerificationSimulator {
 
         for (Client client : this.clientsWithSignedMessages.keySet()) {
             SignedMessage signedMessage = this.clientsWithSignedMessages.get(client);
-            Bank.ProcessingResult processingResult = this.bank.processSignedMessage(client.getId(), signedMessage);
-            transactions.add(new Transaction(getRandomLocalDate(), getRandomLocalTime(), client.getId(), signedMessage, processingResult));
+            Bank.ProcessingResult processingResult = this.bank.processSignedMessage(client.getClientId(), signedMessage);
+            transactions.add(new Transaction(getRandomLocalDate(), getRandomLocalTime(), client.getClientId(), signedMessage, processingResult));
         }
 
         this.writeToFile(transactions);

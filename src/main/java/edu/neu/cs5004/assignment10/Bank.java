@@ -30,7 +30,7 @@ public class Bank {
         }
 
         PublicClientInfo clientInfo = this.clientInfoMap.get(clientId);
-        boolean isSignatureValid = RsaAlgorithm.verifyDigitalSignature(signedMessage, clientInfo.getPublishKey());
+        boolean isSignatureValid = RsaAlgorithm.verifyDigitalSignature(signedMessage, clientInfo.getPublicKey());
 
         if (!isSignatureValid) {
             return new ProcessingResult(isSignatureValid, false);

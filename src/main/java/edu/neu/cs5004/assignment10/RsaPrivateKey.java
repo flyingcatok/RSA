@@ -2,16 +2,30 @@ package edu.neu.cs5004.assignment10;
 
 import java.math.BigInteger;
 
+/**
+ * Represents a rsa private key.
+ */
 public class RsaPrivateKey extends RsaKey {
-
-    private BigInteger exponent;
-
-    public RsaPrivateKey(BigInteger modulus, BigInteger exponent) {
-        super(modulus);
-        this.exponent = exponent;
-    }
-
-    public BigInteger getExponent() {
-        return exponent;
-    }
+  
+  private BigInteger exponent;
+  
+  /**
+   * Creates a rsa private key given a modulus and an exponent.
+   *
+   * @param modulus  the given modulus.
+   * @param exponent the given exponent.
+   */
+  public RsaPrivateKey(BigInteger modulus, BigInteger exponent) {
+    super( modulus );
+    this.exponent = exponent;
+  }
+  
+  /**
+   * Getter for the exponent.
+   *
+   * @return the exponent.
+   */
+  public BigInteger getExponent( ) {
+    return exponent;
+  }
 }
