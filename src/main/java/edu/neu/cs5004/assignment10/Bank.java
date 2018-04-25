@@ -49,22 +49,22 @@ public class Bank {
         throw new IllegalStateException("Shouldn't reach to here. Please check if Banking action is supported.");
     }
 
-    public class ProcessingResult {
-        private boolean isMessageVerified;
-        private boolean isBankingActionAccepted;
+    public static class ProcessingResult {
+        private boolean messageVerified;
+        private boolean bankActionAccepted;
 
         public ProcessingResult(boolean isMessageVerified, boolean isBankingActionAccepted) {
 
-            this.isMessageVerified = isMessageVerified;
-            this.isBankingActionAccepted = isBankingActionAccepted;
+            this.messageVerified = isMessageVerified;
+            this.bankActionAccepted = isBankingActionAccepted;
         }
 
         public boolean isMessageVerified() {
-            return isMessageVerified;
+            return messageVerified;
         }
 
         public boolean isBankingActionAccepted() {
-            return isBankingActionAccepted;
+            return bankActionAccepted;
         }
     }
 }

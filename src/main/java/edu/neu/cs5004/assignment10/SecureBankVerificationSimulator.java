@@ -11,18 +11,18 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
 public class SecureBankVerificationSimulator {
-    private static final Integer NUMBER_OF_CLIENTS_UPPER_LIMIT = new Integer(50000);
-    private static final Integer NUMBER_OF_CLIENT_LOWER_LIMIT = new Integer(0);
-    private static final Integer NUMBER_OF_VERIFICATIONS_UPPER_LIMIT = new Integer(10000);
-    private static final Integer NUMBER_OF_VERIFICATIONS_LOWER_LIMIT = new Integer(0);
-    private static final Integer MESSAGE_UPPER_LIMIT = new Integer(30000);
-    private static final Integer MESSAGE_LOWER_LIMIT = new Integer(0);
-    private static final Integer DEPOSIT_UPPER_LIMIT = new Integer(2000);
-    private static final Integer DEPOSIT_LOWER_LIMIT = new Integer(0);
-    private static final Integer WITHDRAWAL_UPPER_LIMIT = new Integer(3000);
-    private static final Integer WITHDRAWAL_LOWER_LIMIT = new Integer(0);
-    private static final Double PERCENTAGE_OF_INVALID_MESSAGES_UPPER_LIMIT = new Double(100.0);
-    private static final Double PERCENTAGE_OF_INVALID_MESSAGES_LOWER_LIMIT = new Double(0.0);
+    private static final Integer NUMBER_OF_CLIENTS_UPPER_LIMIT = Integer.valueOf(50000);
+    private static final Integer NUMBER_OF_CLIENT_LOWER_LIMIT = Integer.valueOf(0);
+    private static final Integer NUMBER_OF_VERIFICATIONS_UPPER_LIMIT = Integer.valueOf(10000);
+    private static final Integer NUMBER_OF_VERIFICATIONS_LOWER_LIMIT = Integer.valueOf(0);
+    private static final Integer MESSAGE_UPPER_LIMIT = Integer.valueOf(30000);
+    private static final Integer MESSAGE_LOWER_LIMIT = Integer.valueOf(0);
+    private static final Integer DEPOSIT_UPPER_LIMIT = Integer.valueOf(2000);
+    private static final Integer DEPOSIT_LOWER_LIMIT = Integer.valueOf(0);
+    private static final Integer WITHDRAWAL_UPPER_LIMIT = Integer.valueOf(3000);
+    private static final Integer WITHDRAWAL_LOWER_LIMIT = Integer.valueOf(0);
+    private static final Double PERCENTAGE_OF_INVALID_MESSAGES_UPPER_LIMIT = Double.valueOf(100.0);
+    private static final Double PERCENTAGE_OF_INVALID_MESSAGES_LOWER_LIMIT = Double.valueOf(0.0);
     private static final String UTF = "UTF-8";
     private static final String FIRST_LINE = "Transaction number – Date,Time,Client ID,Message,Digital signature,Verified,Transactions status";
     private static final String REGEX_COMMA = ",";
@@ -82,13 +82,13 @@ public class SecureBankVerificationSimulator {
 
     private List<Client> generateClients() {
         List<Client> clients = new ArrayList<>();
-        IntStream.rangeClosed(1, this.numberOfClients).parallel().forEach(i -> clients.add(generateClient()));
+        IntStream.rangeClosed(1, this.numberOfClients).parallel().forEach(integer -> clients.add(generateClient()));
 
         return clients;
     }
 
     private void generateVerifications() {
-        Integer numberOfInvalidVerifications = new Double(this.numberOfVerifications * this.percentageOfInvalidMsg / 100).intValue();
+        Integer numberOfInvalidVerifications = (int) (this.numberOfVerifications * this.percentageOfInvalidMsg / 100);
         Integer numberOfValidVerifications = this.numberOfVerifications - numberOfInvalidVerifications;
         List<Client> clientList = generateClients();
         Collections.shuffle(clientList);
@@ -149,16 +149,15 @@ public class SecureBankVerificationSimulator {
     private void simulateTransactionProcessing() {
         List<Transaction> transactions = new ArrayList<>();
 
-        for (Client client : this.clientsWithSignedMessages.keySet()) {
-            SignedMessage signedMessage = this.clientsWithSignedMessages.get(client);
-            Bank.ProcessingResult processingResult = this.bank.processSignedMessage(client.getClientId(), signedMessage);
-            transactions.add(new Transaction(getRandomLocalDate(), getRandomLocalTime(), client.getClientId(), signedMessage, processingResult));
+        for (Map.Entry<Client, SignedMessage> entry : this.clientsWithSignedMessages.entrySet()) {
+            Bank.ProcessingResult processingResult = this.bank.processSignedMessage(entry.getKey().getClientId(), entry.getValue());
+            transactions.add(new Transaction(getRandomLocalDate(), getRandomLocalTime(), entry.getKey().getClientId(), entry.getValue(), processingResult));
         }
 
         this.writeToFile(transactions);
     }
 
-    public void Run() {
+    public void run() {
         this.setUp();
         this.simulateTransactionProcessing();
     }
